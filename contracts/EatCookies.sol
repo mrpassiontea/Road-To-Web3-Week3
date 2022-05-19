@@ -14,11 +14,10 @@ contract EatCookies is ERC721URIStorage {
 
     mapping(uint256 => uint256) public tokenIdToCookiesEaten;
 
-    constructor() ERC271 ("Eat Cookies", "EC") {
-
-    }
+    constructor() ERC721 ("Eat Cookies", "EC") {}
 
     function mint() public {
+        require(_tokenIds.current() <= 5, "The max mint count is five.");
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
         _safeMint(msg.sender, newItemId);
@@ -26,7 +25,7 @@ contract EatCookies is ERC721URIStorage {
         _setTokenURI(newItemId, getTokenURI(newItemId));
     }
 
-    function generateCharacter(uint256 tokenId) public returns(string memory) {
+    function generateCharacter(uint256 tokenId) public view returns(string memory) {
         bytes memory svg = abi.encodePacked(
             '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350">',
             '<style>.base { fill: white; font-family: serif; font-size: 14px; }</style>',
@@ -48,7 +47,7 @@ contract EatCookies is ERC721URIStorage {
         return eaten.toString();
     }
 
-    function getTokenURI(uint256 tokenId) public returns (string memory) {
+    function getTokenURI(uint256 tokenId) public view returns (string memory) {
         bytes memory dataURI = abi.encodePacked(
             '{',
                 '"name": "Eat Cookies #', tokenId.toString(), '",',
